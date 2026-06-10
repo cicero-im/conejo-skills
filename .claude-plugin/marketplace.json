@@ -5,13 +5,13 @@
     "email": "arthursrodrigues@gmail.com"
   },
   "metadata": {
-    "description": "arthrod's curated skill set \u2014 centred on the Conejo coding-philosophy family (conejo/conejo-code/conejo-frontend/conejo-merge) with strict frontend testing doctrine, plus Pydantic AI, Plate/DOCX, Tauri/better-auth, Rust, and Pi terminal agent.",
-    "version": "3.0.0"
+    "description": "arthrod's curated skill set \u2014 centred on the Conejo coding-philosophy family (conejo/conejo-code/conejo-debug/conejo-frontend/conejo-merge) with strict frontend testing doctrine, plus Pydantic AI, Plate/DOCX, Tauri/better-auth, Rust, and Pi terminal agent.",
+    "version": "3.1.0"
   },
   "plugins": [
     {
       "name": "arthrod-skills",
-      "description": "85 skills as one bundle, organized around the Conejo coding-philosophy family. See README.md for the family map.",
+      "description": "82 skills as one bundle, organized around the Conejo coding-philosophy family. See README.md for the family map.",
       "source": "./",
       "strict": false,
       "skills": [
@@ -34,11 +34,13 @@
         "./skills/brainstorming",
         "./skills/browser-test-agent",
         "./skills/changeset",
+        "./skills/claude-api",
         "./skills/code-review",
         "./skills/coderlm",
         "./skills/computer-use-agents",
         "./skills/conejo",
         "./skills/conejo-code",
+        "./skills/conejo-debug",
         "./skills/conejo-frontend",
         "./skills/conejo-merge",
         "./skills/deepagents",
@@ -53,7 +55,6 @@
         "./skills/hono",
         "./skills/i18n-inlang-localization",
         "./skills/impeccable",
-        "./skills/layout",
         "./skills/llm-chat-sdks",
         "./skills/major-task",
         "./skills/marimo",
@@ -64,7 +65,6 @@
         "./skills/pi-using",
         "./skills/plate-testing-strategy",
         "./skills/pr-docx",
-        "./skills/proud-zanahoria",
         "./skills/pydantic-ai-agent-builder",
         "./skills/pydantic-ai-common-pitfalls",
         "./skills/pydantic-ai-testing",
@@ -96,10 +96,7 @@
         "./skills/verification-before-completion",
         "./skills/work-task",
         "./skills/writing-plans",
-        "./skills/writing-skills",
-        "./skills/zanahoria-decisions",
-        "./skills/zanahoria-multi-assumptions",
-        "./skills/zanahoria-plans"
+        "./skills/writing-skills"
       ]
     }
   ]

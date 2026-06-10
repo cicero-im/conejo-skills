@@ -30,6 +30,58 @@ Backend/logic/CLI/library use `vitest`; UI behavior uses agent-browser click-flo
 - Strengthen tests after green: `references/auto-improve-tests.md`.
 - Optional auto-trigger hooks: `hooks/` — install with `scripts/install-conejo-hooks.sh`.
 
+## Plan stress-testing (Zanahoria family)
+
+Three sibling skills that stress-test plans via @coderabbitai before you commit to implementation. Pick one based on how confident you are in the approach:
+
+- **`references/zanahoria-plans`** — single plan, inverted and re-asserted until CR produces a battle-hardened version.
+- **`references/zanahoria-multi-assumptions`** — 2–3 parallel framings of the same goal with deliberately shuffled assumptions, so CR has comparative material instead of a yes/no on a single approach.
+- **`references/zanahoria-decisions`** — closes a multi-assumptions family by extracting the load-bearing assumption, naming a winner, capturing the decision as an ADR, and cleanly closing the rejected variants.
+
+## Model preferences & multi-agent dispatch (READ BEFORE STAGE PROMPTS)
+
+The line above ("Brainstorm... run opencode ... --model zai-coding-plan/glm-5.1 ...") is the **default** model. Override it whenever one of the conditions below applies.
+
+**When to swap the default `glm-5.1`:**
+- The user asks for a different point of view, contrarian take, devil's advocate, "what would X say", or expresses distrust of a single model.
+- The user is "poor" (budget-constrained, cost-sensitive, or signals `cheap` / `free` / `avoid paid`).
+
+**Preferred agent families (in order of preference):**
+
+1. `zai-coding-plan/glm-5.1` — the default. Smartest but slow.
+2. `minimax-coding-plan/minimax-m3` — the fast M3 coding plan; use for any task where speed > nuance.
+3. `minimax` (vanilla) — only as a last-resort fallback.
+4. `alibaba-coding-plan/qwen-3.7-max` — Alibaba's coding plan. Each family has multiple versions; **always substitute to the biggest available model of the same family** (e.g. `qwen-3.7-max` → next `qwen-3.x-max` or `qwen-4-max` if released).
+
+**Invocation pattern — always parallel, always discrete:**
+
+- Dispatch via `opencode run` (or `pi` when the user asks for it) in the **background** with `&` and `>/tmp/oc.log 2>&1`, then poll.
+- **Always send multiple agents at the same time.** Split the task into discrete, independent units (one agent per unit). You may send **up to 20 agents in parallel**.
+- Each agent gets a self-contained prompt: file paths, expected output, acceptance criteria, the model flag, and `--dangerously-skip-permissions --dir <workdir>`.
+- Never reuse a working directory across agents that touch the same files — clone or copy first.
+- Collect outputs, dedupe, pick the best, integrate.
+
+**Canonical command template:**
+
+```bash
+nohup opencode run "$PROMPT" \
+  --model <family>/<biggest-available-version> \
+  --dangerously-skip-permissions \
+  --dir "$WORKDIR" \
+  > /tmp/oc-$AGENT_NAME.log 2>&1 &
+```
+
+**Replacing the `glm-5.1` in the loop above:**
+
+| Stage | Default | If user wants a different POV | If user is "poor" |
+|---|---|---|---|
+| Brainstorm (Specs) | `zai-coding-plan/glm-5.1` | `minimax-coding-plan/minimax-m3` | `alibaba-coding-plan/qwen-3.7-max` (or biggest qwen) |
+| Plan | `deepseek/deepseek-v4-pro` | `minimax-coding-plan/minimax-m3` | `alibaba-coding-plan/qwen-3.7-max` (or biggest qwen) |
+| Interface (failing tests) | `deepseek/deepseek-v4-pro` | `minimax-coding-plan/minimax-m3` | `alibaba-coding-plan/qwen-3.7-max` (or biggest qwen) |
+| Implement | `deepseek/deepseek-v4-pro` | `minimax-coding-plan/minimax-m3` | `alibaba-coding-plan/qwen-3.7-max` (or biggest qwen) |
+
+When swapping, dispatch **2–4 agents in parallel** for that stage (one per family) and pick the best result; never sequentialize.
+
 ## Tooling
 
 bun (not npm), vitest (not jest, not `bun test`), vite-plus (`vp`) for build/check. ESM only.

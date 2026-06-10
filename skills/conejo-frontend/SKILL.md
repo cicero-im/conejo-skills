@@ -28,6 +28,7 @@ the vehicle for UI behavior is agent-browser click-flows. Doctrine is canonical 
 - **Routing:** `refs/tanstack-router`, `refs/tanstack-router-best-practices`
 - **Generative UI:** `refs/json-render`
 - **SEO:** `refs/seo-audit`
+- **Layout:** `refs/layout`
 
-Foundational React/styling/layout skills stay top-level: [[react]], [[react-best-practices]],
-[[react-composables]], [[tailwind-v4]], [[layout]].
+Foundational React/styling skills stay top-level: [[react]], [[react-best-practices]],
+[[react-composables]], [[tailwind-v4]].
