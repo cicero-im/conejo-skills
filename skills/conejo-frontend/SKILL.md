@@ -20,7 +20,7 @@ the vehicle for UI behavior is agent-browser click-flows. Doctrine is canonical 
 
 ## Reference index (folded skills under `refs/`)
 
-- **Design taste & critique:** `refs/refine-distill-frontend`, `refs/ui-ux-pro-max`, `refs/increase-impact-personality-frontend`, `refs/stitch-design-taste`
+- **Design taste & critique:** `refs/frontend-design`, `refs/refine-distill-frontend`, `refs/ui-ux-pro-max`, `refs/increase-impact-personality-frontend`, `refs/stitch-design-taste`
 - **Typography:** `refs/typeset`, `refs/type-mania`
 - **Color:** `refs/colorize`
 - **UX planning:** `refs/ux-design-brief`
