@@ -241,17 +241,6 @@ Run all 4 phases end-to-end (Hunt → Burrow → Interrogate → TDD Implement):
 3. Wait for and interrogate CodeRabbitAI plans
 4. Implement with TDD
 
-### Hunt Only
-Just Phase 1-2: review PRs and open issues. Use when you want to queue up work. 
-```
-conejo hunt
-```
-
-### Implement Only (skeptical mode)
-Phase 3-4: take an existing conejo issue, interrogate the plan, and implement.
-```
-conejo implement <ISSUE_URL>
-```
 
 ### Calm Implement Mode ⭐ (the default for "just implement abc")
 Phase 5: the user has already triaged the comments and wants them shipped. Comment-by-comment gate, group into tasks, test/implement methodically, push back on bad comments, no performative agreement.
