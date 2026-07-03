@@ -11,15 +11,19 @@ mandate (`STITCH-DESIGN.md` in each design-skill folder). 13 design/UI skills fo
 
 ## Conejo coding-philosophy family
 
-The four `conejo-*` skills form a tightly coupled PR workflow. They share a doctrine
-(`references/testing-doctrine.md` inside `conejo-code`) and route to each other.
+The five `conejo-*` skills form a tightly coupled coding + PR workflow. They share two
+doctrines authored once inside `conejo-code` — `references/testing-doctrine.md`
+(red-green TDD) and `references/agent-dispatch.md` (the Warren Protocol: dispatch work
+to crush → opencode → other agent CLIs → subagents to preserve context and get
+adversarial, different-corpus opinions) — and route to each other.
 
 | Skill | Role |
 |---|---|
-| **`conejo`** | Universal dispatcher/philosophy — enforces red-green TDD, stacked PRs, and evidence-before-claims. Routes incoming PR comments to the three specialised siblings below. |
-| **`conejo-code`** | Active coding loop. Holds the canonical testing doctrine at `references/testing-doctrine.md` (red-green-refactor, no green-without-red, no implementation without a failing test). |
-| **`conejo-frontend`** | VERY STRICT UI gate. Mandates agent-browser E2E click-flows for every UI assertion; forbids tRPC calls to assert UI state (allowed only for auth/seeding). Requires a 24/7 dev server, React + Tailwind v4 + shadcn/ui; rejects Ant Design. 13 design/UI skills live under `skills/conejo-frontend/refs/` as reference docs reached via its index — they are **not** standalone registered skills. |
-| **`conejo-merge`** | Two-mode PR handler: **skeptical mode** (hunt PRs, interrogate the code/plan, file CR-plan issues, TDD-implement) and **calm-implement mode** (gate each comment, group into tasks, test/install/ship). Also documents the stacked-PR merge method. |
+| **`conejo`** | Universal dispatcher/philosophy — enforces red-green TDD, stacked PRs, evidence-before-claims, context-preserving agent dispatch, the hidden-gems review doctrine, and the no-batch-review rule. Routes work to the four specialised siblings below. |
+| **`conejo-code`** | Active coding loop. Holds both canonical doctrines: `references/testing-doctrine.md` (red-green-refactor, no green-without-red, no implementation without a failing test) and `references/agent-dispatch.md` (the crush/opencode/subagent dispatch ladder, adversarial review prompts, model preferences). |
+| **`conejo-frontend`** | VERY STRICT UI gate. Mandates agent-browser E2E click-flows for every UI assertion; forbids tRPC calls to assert UI state (allowed only for auth/seeding). Requires a 24/7 dev server, React + Tailwind v4 + shadcn/ui; rejects Ant Design. Mandatory screenshot + browser-console + design-critique loop before any visible change counts as done. 13 design/UI skills live under `skills/conejo-frontend/refs/` as reference docs reached via its index — they are **not** standalone registered skills. |
+| **`conejo-merge`** | Calm-implement PR handler: gate each comment individually (batch review is forbidden; the verdict ledger must reconcile), group into tasks, test/install/ship, reply with state changes. Hidden-gems doctrine: different bots = different corpora, so weird nits get more scrutiny, not less. Deep engines live under `skills/conejo-merge/refs/` (CodeRabbit CLI engine, autofix, PR triage incl. stacked-PR merge order, proud-zanahoria). |
+| **`conejo-debug`** | Skeptical investigator & autonomous deep work: hunt PRs like crime scenes, interrogate CodeRabbit plans, systematic debugging protocol with multi-agent second opinions, strict TDD fixes. Slow, powerful, one clue at a time. |
 
 > **Foundational top-level skills** — `react`, `react-best-practices`, `react-composables`,
 > `layout`, and `tailwind-v4` remain registered as independent top-level skills because they are

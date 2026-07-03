@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "arthrod's curated skill set \u2014 centred on the Conejo coding-philosophy family (conejo/conejo-code/conejo-debug/conejo-frontend/conejo-merge) with strict frontend testing doctrine, plus Pydantic AI, Plate/DOCX, Tauri/better-auth, Rust, and Pi terminal agent.",
-    "version": "3.1.0"
+    "version": "3.2.0"
   },
   "plugins": [
     {

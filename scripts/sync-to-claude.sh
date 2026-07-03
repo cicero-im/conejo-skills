@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Mirror the four conejo-* skills to a deploy root and prune the 13 folded skills.
+# Mirror the five conejo-* skills to a deploy root and prune the 13 folded skills.
 # Symlink-aware; refuses to delete locally-modified real directories.
 # Usage: sync-to-claude.sh [--root <dir>] [--dry-run]
 set -euo pipefail
@@ -13,7 +13,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
-MIRROR="conejo conejo-code conejo-frontend conejo-merge"
+MIRROR="conejo conejo-code conejo-debug conejo-frontend conejo-merge"
 PRUNE="refine-distill-frontend increase-impact-personality-frontend ui-ux-pro-max \
 stitch-design-taste colorize typeset type-mania ux-design-brief shadcn-parity \
 json-render tanstack-router tanstack-router-best-practices seo-audit"

@@ -1,30 +1,131 @@
 ---
 name: conejo-code
-description: Active coding loop — feature stages (brainstorm→plan→interface→tests→implement→improve→review→loop), red-green TDD execution, build-fix, deps-check, coding standards, bug-fix learning. Owns the canonical testing doctrine. Use when writing or changing code (backend, logic, APIs, libraries, CLIs).
+description: Active coding loop — feature stages (brainstorm→plan→interface→tests→implement→improve→review→loop), red-green TDD execution, context-preserving agent dispatch via crush/opencode/other CLIs with subagent fallback, adversarial reviews, coding standards, bug-fix learning. Owns the canonical testing doctrine and the agent-dispatch doctrine. Use when writing or changing code (backend, logic, APIs, libraries, CLIs).
 ---
 
 # Conejo-code — active coding
 
-The hands-on coding loop. Philosophy lives in [[conejo]]; this skill is how you execute it. Relentless, disciplined, experiment-driven and detail-oriented coding practice. ALWAYS set a timer to (1) wait for the user, (2) wait for Claude agents, (3) Claude or any other tool or (4) wait for opencode or forge agents. NEVER expect that you will be awaken by the response of any of these. YOU MUST BE FULLY AUTONOMOUS AND IMPLEMENT THE ORIGINAL PLAN INFERRING THE BEST ALTERNATIVES TO ENSURE IT WORKS.
+The hands-on coding loop. Philosophy lives in [[conejo]]; this skill is how you execute
+it — relentless, disciplined, experiment-driven, detail-obsessed.
 
-## The loop (adapted feature stages)
+**Autonomy rule:** you MUST be fully autonomous. ALWAYS set a timer when waiting for
+(1) the user, (2) Claude agents, (3) Claude or any other tool, or (4) opencode/crush/
+forge agents. NEVER expect that a response will wake you up. Implement the original
+plan, inferring the best alternatives to make it work.
 
-- Brainstorm (Specs) → run "opencode run $PROMPT --model zai-coding-plan/glm-5.1 --dangerously-skip-permissions --dir  path/to/this/dir" to review your specs → Plan "opencode run $PROMPT --model deepseek/deepseek-v4-pro --dangerously-skip-permissions --dir  path/to/this/dir" to review your plan (glm-5.1 is smarter but slow, deepseek is a bit faster) → Interface → "opencode run $PROMPT --model deepseek/deepseek-v4-pro --dangerously-skip-permissions --dir  path/to/a/clone/of/this/dir" to create tests **failing tests** → "opencode run $PROMPT --model deepseek/deepseek-v4-pro --dangerously-skip-permissions --dir  path/to/a/clone/of/this/dir" to Implement → Improve tests → Code review  → (loop).
-- Full stage notes: `references/feature-stages.md`. UI stages (design/UIUX-review) and any
-visual work are owned by [[conejo-frontend]].
-- Attention! Don't be afraid of sending several agents: split the tasks as much as possible. 
-- PR over PR ALWAYS. Push. After it is at Github, clean their mess.
-- PRESERVE your context no matter what! Send these other agents first, so we can have different perspectives, but if you need to do the work, send your agents. Don't pollute your context.
+## Step 0 — Resolve your dispatcher (ONCE, before the loop)
+
+Read `references/agent-dispatch.md` (the Warren Protocol) — it is canonical. The short
+version:
+
+```bash
+if   command -v crush    >/dev/null 2>&1; then DISPATCH=crush
+elif command -v opencode >/dev/null 2>&1; then DISPATCH=opencode
+elif command -v codex    >/dev/null 2>&1; then DISPATCH=codex
+elif command -v gemini   >/dev/null 2>&1; then DISPATCH=gemini
+elif command -v pi       >/dev/null 2>&1; then DISPATCH=pi
+else DISPATCH=subagents; fi
+```
+
+- IF `crush` or `opencode` is available → dispatch stage work through it (templates below).
+- ELIF another agent CLI is available → `<cli> --help | head -40`, find its headless
+  mode (`run` / `exec` / `-p`), use it.
+- ELSE → spawn subagents with your harness's Agent tool. Subagents ARE the Claude
+  fallback — do the same splitting, the same parallel dispatch, the same adversarial
+  prompts. A second `claude -p` adds nothing over them.
+- NEVER decide "no agents available, I'll do everything inline." That torches your
+  context AND forfeits the second pair of eyes.
+
+**Why we dispatch (the two laws):** (1) context preservation — you orchestrate, they
+excavate; only conclusions enter your context; (2) adversarial diversity — a different
+training corpus catches what yours cannot, and a reviewer told to refute finds what an
+admirer never will.
+
+## The loop (feature stages, dispatch-annotated)
+
+Full stage notes: `references/feature-stages.md`. UI stages (design/UIUX review) and
+any visual work are owned by [[conejo-frontend]].
+
+| # | Stage | Who | How |
+|---|---|---|---|
+| 1 | Brainstorm → written spec | You (+ user) | [[brainstorming]] |
+| 2 | **Spec review — adversarial** | Other-corpus agent | `$DISPATCH`; model `zai-coding-plan/glm-5.1` (smartest, slow) |
+| 3 | Plan | You | `references/feature-stages.md` Stage 1 |
+| 4 | **Plan review — adversarial** | Other-corpus agent | `$DISPATCH`; model `deepseek/deepseek-v4-pro` (a bit faster) |
+| 5 | Interface (types/signatures, no impl) | You | — |
+| 6 | **Write failing tests (RED)** | Dispatched agent, in a CLONE | `$DISPATCH`, deepseek — then YOU run them and verify they fail for the right reason |
+| 7 | **Implement (GREEN)** | Dispatched agent, in a CLONE | `$DISPATCH`, deepseek — then YOU run the suite and verify green |
+| 8 | Improve tests | You or agent | `references/auto-improve-tests.md` |
+| 9 | **Code review — adversarial** | Other-corpus agent (+ [[conejo-merge]] once PR'd) | reviewer prompt must REFUTE, never admire |
+| 10 | Loop | — | next feature stacks a PR on this one |
+
+Rules that ride along:
+
+- IF a review stage (2, 4, 9) returns only praise THEN it's a null result — re-dispatch
+  with a harsher prompt or a different model. Zero credit for praise.
+- IF an agent finished THEN read its conclusion/diff, NOT its transcript. Transcripts
+  stay in /tmp; conclusions enter your context.
+- Don't be afraid of sending several agents: split the tasks as much as possible —
+  up to 20 in parallel, one discrete unit each.
+- NEVER let two agents write to the same directory — clone/worktree first.
+- PR over PR ALWAYS. Push. After it is at GitHub, clean their mess.
+- PRESERVE your context no matter what. Other-corpus agents first (different
+  perspectives); if the work must be done anyway, send YOUR agents. Don't pollute
+  your context.
+
+### Canonical dispatch commands
+
+opencode (per-call `--model` — the corpus-diversity workhorse):
+
+```bash
+nohup opencode run "$PROMPT" \
+  --model <family>/<biggest-available-version> \
+  --dangerously-skip-permissions \
+  --dir "$WORKDIR" \
+  > /tmp/oc-$NAME.log 2>&1 &
+```
+
+crush (model comes from crush's own config):
+
+```bash
+nohup crush run -q -y --cwd "$WORKDIR" "$PROMPT" > /tmp/crush-$NAME.log 2>&1 &
+```
+
+Then set the timer and poll — NOBODY wakes you up:
+
+```bash
+sleep 60; tail -20 /tmp/oc-$NAME.log   # repeat until the done-marker appears
+```
+
+Subagent fallback (no CLI found): one discrete unit per subagent; self-contained prompt
+(paths, acceptance criteria, output format); launch all independent subagents in ONE
+message; worktree isolation for writers; give each reviewer a different lens
+(correctness / security / performance) — perspective diversity substitutes for corpus
+diversity. Full recipe: `references/agent-dispatch.md`.
+
+## Model preferences (when the CLI takes `--model`)
+
+| IF | THEN model |
+|---|---|
+| Default — spec review | `zai-coding-plan/glm-5.1` (smartest but slow) |
+| Default — plan review / failing tests / implement | `deepseek/deepseek-v4-pro` |
+| User wants a different POV, contrarian take, "what would X say", or distrusts a single model | `minimax-coding-plan/minimax-m3` (fast M3 coding plan) |
+| User is "poor" (budget-constrained, signals `cheap`/`free`/`avoid paid`) | `alibaba-coding-plan/qwen-3.7-max` — always substitute the biggest available model of the family (`qwen-3.7-max` → `qwen-4-max` if released) |
+| Last resort | vanilla `minimax` |
+
+IF swapping models for a stage THEN dispatch **2–4 agents in parallel** (one per family)
+and judge: winner merges, runners-up get their best ideas grafted. Never sequentialize.
 
 ## Testing — READ FIRST
 
 The universal red-green doctrine is canonical in `references/testing-doctrine.md`.
 Backend/logic/CLI/library use `vitest`; UI behavior uses agent-browser click-flows
-(see [[conejo-frontend]]). Never implement before a failing test.
+(see [[conejo-frontend]]). Never implement before a failing test. RED must fail for the
+RIGHT reason (assertion failure, not an import error).
 
 ## Standards & helpers
 
-- Coding standards: `references/coding-standards.md` (+ `-api-design.md`).
+- Coding standards: `references/coding-standards.md` (+ `-api-design.md`, `-testing.md`).
 - Dependency hygiene (bun): `references/deps-check.md`.
 - Capture bug-fix learnings: `references/bug-fix-learning.md`.
 - Strengthen tests after green: `references/auto-improve-tests.md`.
@@ -32,56 +133,16 @@ Backend/logic/CLI/library use `vitest`; UI behavior uses agent-browser click-flo
 
 ## Plan stress-testing (Zanahoria family)
 
-Three sibling skills that stress-test plans via @coderabbitai before you commit to implementation. Pick one based on how confident you are in the approach:
+Stress-test plans via @coderabbitai BEFORE you commit to implementation. Pick by
+confidence:
 
-- **`references/zanahoria-plans`** — single plan, inverted and re-asserted until CR produces a battle-hardened version.
-- **`references/zanahoria-multi-assumptions`** — 2–3 parallel framings of the same goal with deliberately shuffled assumptions, so CR has comparative material instead of a yes/no on a single approach.
-- **`references/zanahoria-decisions`** — closes a multi-assumptions family by extracting the load-bearing assumption, naming a winner, capturing the decision as an ADR, and cleanly closing the rejected variants.
-
-## Model preferences & multi-agent dispatch (READ BEFORE STAGE PROMPTS)
-
-The line above ("Brainstorm... run opencode ... --model zai-coding-plan/glm-5.1 ...") is the **default** model. Override it whenever one of the conditions below applies.
-
-**When to swap the default `glm-5.1`:**
-- The user asks for a different point of view, contrarian take, devil's advocate, "what would X say", or expresses distrust of a single model.
-- The user is "poor" (budget-constrained, cost-sensitive, or signals `cheap` / `free` / `avoid paid`).
-
-**Preferred agent families (in order of preference):**
-
-1. `zai-coding-plan/glm-5.1` — the default. Smartest but slow.
-2. `minimax-coding-plan/minimax-m3` — the fast M3 coding plan; use for any task where speed > nuance.
-3. `minimax` (vanilla) — only as a last-resort fallback.
-4. `alibaba-coding-plan/qwen-3.7-max` — Alibaba's coding plan. Each family has multiple versions; **always substitute to the biggest available model of the same family** (e.g. `qwen-3.7-max` → next `qwen-3.x-max` or `qwen-4-max` if released).
-
-**Invocation pattern — always parallel, always discrete:**
-
-- Dispatch via `opencode run` (or `pi` when the user asks for it) in the **background** with `&` and `>/tmp/oc.log 2>&1`, then poll.
-- **Always send multiple agents at the same time.** Split the task into discrete, independent units (one agent per unit). You may send **up to 20 agents in parallel**.
-- Each agent gets a self-contained prompt: file paths, expected output, acceptance criteria, the model flag, and `--dangerously-skip-permissions --dir <workdir>`.
-- Never reuse a working directory across agents that touch the same files — clone or copy first.
-- Collect outputs, dedupe, pick the best, integrate.
-
-**Canonical command template:**
-
-```bash
-nohup opencode run "$PROMPT" \
-  --model <family>/<biggest-available-version> \
-  --dangerously-skip-permissions \
-  --dir "$WORKDIR" \
-  > /tmp/oc-$AGENT_NAME.log 2>&1 &
-```
-
-**Replacing the `glm-5.1` in the loop above:**
-
-| Stage | Default | If user wants a different POV | If user is "poor" |
-|---|---|---|---|
-| Brainstorm (Specs) | `zai-coding-plan/glm-5.1` | `minimax-coding-plan/minimax-m3` | `alibaba-coding-plan/qwen-3.7-max` (or biggest qwen) |
-| Plan | `deepseek/deepseek-v4-pro` | `minimax-coding-plan/minimax-m3` | `alibaba-coding-plan/qwen-3.7-max` (or biggest qwen) |
-| Interface (failing tests) | `deepseek/deepseek-v4-pro` | `minimax-coding-plan/minimax-m3` | `alibaba-coding-plan/qwen-3.7-max` (or biggest qwen) |
-| Implement | `deepseek/deepseek-v4-pro` | `minimax-coding-plan/minimax-m3` | `alibaba-coding-plan/qwen-3.7-max` (or biggest qwen) |
-
-When swapping, dispatch **2–4 agents in parallel** for that stage (one per family) and pick the best result; never sequentialize.
+- IF one plan and you want it battle-hardened → `references/zanahoria-plans` (inverted
+  and re-asserted until CR produces a hardened version).
+- IF torn between framings → `references/zanahoria-multi-assumptions` (2–3 parallel
+  framings with deliberately shuffled assumptions, so CR gets comparative material).
+- IF a multi-assumptions family needs closing → `references/zanahoria-decisions`
+  (extract the load-bearing assumption, name a winner, capture an ADR, close the losers).
 
 ## Tooling
 
-bun (not npm), vitest (not jest, not `bun test`), vite-plus (`vp`) for build/check. ESM only.
+bun (not npm) · vitest (not jest, not `bun test`) · vite-plus (`vp`) for build/check · ESM only.
