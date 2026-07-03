@@ -1,6 +1,6 @@
 ---
 name: conejo-frontend
-description: VERY STRICT frontend gate. Enforces the universal red-green doctrine PLUS the UI superset — agent-browser E2E click-flows (NEVER tRPC to assert UI), 24/7 dev server, test isolation, React + Tailwind v4 + shadcn (NO Ant Design), mandatory screenshot + browser-console + design-critique loop before "done". Indexes the design/UI reference skills. Use for any web UI work.
+description: VERY STRICT frontend gate. Enforces the universal red-green doctrine PLUS the UI superset — agent-browser E2E click-flows (NEVER tRPC to assert UI), 24/7 dev server, test isolation, Astro Framework and Typescript or React + Tailwind v4 + shadcn, mandatory screenshot + browser-console + design-critique loop before "done". Indexes the design/UI reference skills. Use for any web UI work.
 ---
 
 # Conejo-frontend — the strict UI gate
@@ -16,7 +16,7 @@ in `../conejo-code/references/testing-doctrine.md` — read it first.
 3. **Dev server runs 24/7;** UI checks click against it via agent-browser (see
    [[browser-test-agent]]).
 4. **Test isolation:** each click-flow seeds/resets its own state and cleans up.
-5. **Stack:** React + Tailwind v4 + shadcn. **No Ant Design. No Vue.**
+5. **Stack:** **Astro and Cloudflare** or React + Tailwind v4 + shadcn. 
 6. **Screenshot proof or it didn't happen.** IF you claim visible work is done THEN
    fresh screenshots from THIS session exist (desktop + mobile). A green test with an
    ugly page is a failing test with extra steps.
@@ -63,6 +63,21 @@ the user can see THEN run this loop before calling it done:
 - **Generative UI:** `refs/json-render`
 - **SEO:** `refs/seo-audit`
 - **Layout:** `refs/layout`
+
+## Confirmation at the beginning, independent later
+- The agent should confirm prior to implement at the initial stages, but be fully independent thereafter
+- Here an example of a successful confirmation:
+- <successful confirmation>
+  **What stays vs. what comes from the sample:**
+
+  | Layer | Source | Why |
+  | :--- | :--- | :--- |
+  | **Astro scaffolding** | cherry-pick from sample/ | Proven Astro 7 + Cloudflare + D1 + Drizzle setup |
+  | **Domain model** | keep biglaw-droplets | Keeps existing Droplets data |
+  | **Pipeline** | keep biglaw-droplets | Maintains existing ingestion logic |
+  | **Look & feel** | keep biglaw-droplets | Drops the sample's "Live Contracts" look |
+  | **Page content** | port from pages.ts | Re-expressed in .astro components |
+  </successful_confirmation>
 
 Foundational React/styling skills stay top-level: [[react]], [[react-best-practices]],
 [[react-composables]], [[tailwind-v4]].
