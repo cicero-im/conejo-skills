@@ -118,11 +118,23 @@ in parallel (one per family) and judge; never sequentialize.
   dispatch 2–4 with different framings/models, then judge: pick the winner and graft
   the runners-up's best ideas. The gems hide in the losing drafts too.
 - **Timers, ALWAYS.** NOTHING will wake you up — not the user, not Claude agents, not
-  opencode, not crush, not forge. After dispatching, poll yourself:
+  opencode, not crush, not forge, not **@coderabbitai**. After dispatching (or tagging
+  a bot), poll yourself:
 
 ```bash
-sleep 60; tail -20 /tmp/oc-$NAME.log   # repeat until the agent's done-marker appears
+# Poll every ~60s. Cap the wait at 20 minutes wall-clock.
+sleep 60; tail -20 /tmp/oc-$NAME.log   # repeat until done-marker OR 20m elapsed
+# For GitHub bots (CodeRabbit etc.):
+# sleep 60; gh issue/pr view … --json comments  # same 20m cap
 ```
+
+- **Max wait: 20 minutes.** Cap every wait on another agent at **20 minutes** —
+  especially @coderabbitai (also Jules, Gemini, crush, opencode, forge, or any other
+  bot/agent). IF the reply is still missing at the 20m mark THEN **stop waiting**:
+  proceed on best efforts with what you have, keep going diligently and calmly, and
+  leave a short note (issue/PR comment or session log) that you proceeded without the
+  reply. Never block the plan forever on a silent agent. Prefer partial progress over
+  an infinite poll.
 
 - **Collect → dedupe → judge → integrate.** Read the agents' conclusions and diffs,
   never their transcripts. Reconcile disagreements with evidence (run the test, read

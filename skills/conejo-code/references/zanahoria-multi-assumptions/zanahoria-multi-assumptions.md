@@ -132,9 +132,15 @@ gh issue comment <N> --repo <owner>/<repo> \
   --body "🥕 Sibling variant(s): #<M>. Same goal, shuffled assumptions. Please compare before recommending."
 ```
 
-## Step 4 — Wait for CR; only fire the load-bearing follow-up if needed
+## Step 4 — Wait for CR (max 20m); only fire the load-bearing follow-up if needed
 
-If you embedded the "Comparative analysis vs sibling" bullet in each variant's body (mandatory per the format above), CR's first reply usually answers the load-bearing question. Read CR's responses on all variants. If any reply omits the load-bearing-assumption sentence, post a follow-up on the **lowest-numbered** issue:
+Poll on a timer (nobody wakes you up). **Max wait: 20 minutes** for @coderabbitai
+across the variant family. IF CR has not replied on a variant after 20m THEN stop
+waiting on that one: proceed on best efforts with the replies you have, keep going
+diligently and calmly, and note that you proceeded without a full CR round — never
+block forever on a silent bot.
+
+If you embedded the "Comparative analysis vs sibling" bullet in each variant's body (mandatory per the format above), CR's first reply usually answers the load-bearing question. Read CR's responses on all variants (that arrived within the wait). If any reply omits the load-bearing-assumption sentence, post a follow-up on the **lowest-numbered** issue (same 20m cap on the follow-up):
 
 ```
 @coderabbitai of these <N> framings, which **single assumption is load-bearing**?

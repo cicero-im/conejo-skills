@@ -103,14 +103,18 @@ gh api repos/<owner>/<repo>/pulls/<NUMBER>/reviews --paginate
 
 - IF CodeRabbit left nothing (no `coderabbitai[bot]` in any of the pulls above) THEN
   do NOT proceed with an empty comment set and do NOT ask the user — request the review
-  yourself, set a timer, wait, re-pull:
+  yourself, set a timer, wait up to **20 minutes**, re-pull:
 
   ```bash
   gh pr comment <NUMBER> -R <owner>/<repo> --body "@coderabbitai review"
   ```
 
   (Use `@coderabbitai full review` to force a fresh pass over a stale partial review.)
-  Only after CodeRabbit has responded do you continue to Step 2.
+  Prefer continuing after CodeRabbit has responded. **IF 20 minutes pass with no CR
+  reply THEN stop waiting:** proceed on best efforts with whatever other comments
+  exist (or with your own adversarial review via the dispatch ladder), keep going
+  diligently and calmly, leave a short note that you proceeded without CR, and
+  continue to Step 2. Never block forever on a silent bot.
 - Record per comment: `id`, `author.login`, `path`, `line`, `body`, `in_reply_to_id`
   (so threads stay together).
 - **Write down the TOTAL count.** This number is the ledger you reconcile in Step 7.
@@ -229,7 +233,8 @@ Or if no test (nitpick): `"Fixed in <SHA>."`
    not done.
 2. Push.
 3. Request re-review from EACH bot separately (syntax in the Commenter Source Matrix
-   below), then set a timer — nobody wakes you up.
+   below), then set a timer — nobody wakes you up. **Max wait 20 minutes**; after that,
+   best efforts and keep going diligently and calmly (don't block on a silent re-review).
 
 ---
 
@@ -352,7 +357,9 @@ Hunt → Burrow → Interrogate → TDD Implement. Lives in [[conejo-debug]] Pha
 6. **One concern per issue.** Don't bundle unrelated questions.
 7. **Document the journey.** The thread should tell the full story from question to fix.
 8. **No CodeRabbit review → request one yourself, don't ask the user.** Post
-   `@coderabbitai review`, set a timer, wait.
+   `@coderabbitai review`, set a timer, wait up to **20 minutes**. After 20m with no
+   reply: best efforts, keep going diligently and calmly, note that you proceeded
+   without CR — never block forever.
 9. **ALWAYS ASSESS EACH AND EVERY COMMENT.** Don't skip because you already saw it or
    feel skeptical. VERIFY. The ledger must reconcile.
 10. **Weird comments get MORE scrutiny, not less.** Different corpus, hidden gems.

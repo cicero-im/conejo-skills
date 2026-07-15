@@ -86,6 +86,10 @@ EOF
 
 **Issue title must be descriptive and professional** — not carrot-themed. The title is for humans; the body is for provoking CR.
 
+**Wait cap:** poll for CR on a timer (nobody wakes you up). **Max wait 20 minutes.**
+After 20m with no reply, proceed on best efforts with what you have, keep going
+diligently and calmly, and note that you proceeded without CR — never block forever.
+
 ## Turn 2: The Stubborn Correction
 
 ### Step 4 — Read ALL responses (not just CodeRabbit)
@@ -182,7 +186,7 @@ The user gets a battle-hardened implementation plan that has been attacked from 
 |---------|-----------|
 | `zanahoria-plans 1 <task description or plan>` | Turn 1: Invert and open issue |
 | `zanahoria-plans 2 <issue number>` | Turn 2: Read CR, reassert correct plan |
-| `zanahoria-plans <task description or plan>` | Full run: both turns sequentially (wait for CR between) |
+| `zanahoria-plans <task description or plan>` | Full run: both turns sequentially (wait ≤20m for CR between; then best efforts) |
 
 ## Real-World Example: i18n Locale Mismatch (PR #1923)
 
