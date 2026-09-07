@@ -10,11 +10,10 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
+# Least privilege at the workflow level; the opencode job elevates only what it
+# needs. id-token is dropped entirely -- nothing here uses OIDC.
 permissions:
   contents: read
-  pull-requests: write
-  issues: read
-  id-token: write
 
 concurrency:
   group: qwen-review-${{ github.event.pull_request.number }}
@@ -28,19 +27,21 @@ jobs:
   static:
     name: Static analysis (uv / bun / cargo)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803  # v6
         with:
           persist-credentials: false
           fetch-depth: 0
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86  # v5
         with:
           version: latest
 
       - name: Install bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6  # v2
 
       - name: Python — ruff (lint + format check)
         run: |
@@ -92,11 +93,15 @@ jobs:
     name: opencode review (Qwen3.6 Plus)
     runs-on: ubuntu-latest
     if: ${{ !github.event.pull_request.draft }}
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: write   # posts the review comment
     steps:
       # opencode pulls the PR diff via the GitHub API, so it does not need a
       # perfect working tree. Tolerate checkout failures (e.g. repos with a
       # broken .gitmodules) so the LLM review still runs no matter what.
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803  # v6
         continue-on-error: true
         with:
           fetch-depth: 1
@@ -104,7 +109,9 @@ jobs:
           persist-credentials: false
 
       - name: Run opencode
-        uses: anomalyco/opencode/github@latest
+        # Pinned: this step receives DASHSCOPE_API_KEY, so a mutable ref would
+        # let an upstream change exfiltrate the secret without review.
+        uses: anomalyco/opencode/github@77fc88c8ade8e5a620ebbe1197f3a572d29ae91a  # latest
         env:
           DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
