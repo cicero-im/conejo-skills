@@ -116,6 +116,12 @@ jobs:
           persist-credentials: false
 
       - name: Run opencode
+        # Advisory, like the static job: an LLM review is a second opinion, not a
+        # merge gate. A DashScope outage, an expired DASHSCOPE_API_KEY, or a rate
+        # limit is an availability problem with the reviewer, not a defect in the
+        # pull request, and must not block a merge. Read the job log for the
+        # review; a red step here means the reviewer did not run, nothing more.
+        continue-on-error: true
         # Pinned: this step receives DASHSCOPE_API_KEY, so a mutable ref would
         # let an upstream change exfiltrate the secret without review.
         uses: anomalyco/opencode/github@77fc88c8ade8e5a620ebbe1197f3a572d29ae91a  # latest
